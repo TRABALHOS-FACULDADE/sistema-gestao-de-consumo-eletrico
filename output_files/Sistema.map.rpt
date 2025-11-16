@@ -1,5 +1,5 @@
 Analysis & Synthesis report for Sistema
-Sat Nov 15 16:15:16 2025
+Sat Nov 15 21:58:38 2025
 Quartus Prime Version 22.1std.1 Build 917 02/14/2023 SC Lite Edition
 
 
@@ -15,15 +15,18 @@ Quartus Prime Version 22.1std.1 Build 917 02/14/2023 SC Lite Edition
   7. Analysis & Synthesis Resource Utilization by Entity
   8. State Machine - |Sistema|svc_broker:u_broker|state
   9. State Machine - |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|state
- 10. State Machine - |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|state
- 11. State Machine - |Sistema|svc_client:u_client|state
- 12. Registers Removed During Synthesis
- 13. Removed Registers Triggering Further Register Optimizations
- 14. General Register Statistics
- 15. Port Connectivity Checks: "svc_broker:u_broker|svc_risk_analysis:u_svc_risk"
- 16. Post-Synthesis Netlist Statistics for Top Partition
- 17. Elapsed Time Per Partition
- 18. Analysis & Synthesis Messages
+ 10. State Machine - |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|state
+ 11. State Machine - |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|state
+ 12. State Machine - |Sistema|svc_client:u_client|state
+ 13. Registers Removed During Synthesis
+ 14. Removed Registers Triggering Further Register Optimizations
+ 15. General Register Statistics
+ 16. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 17. Port Connectivity Checks: "svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff"
+ 18. Port Connectivity Checks: "svc_broker:u_broker|svc_risk_analysis:u_svc_risk"
+ 19. Post-Synthesis Netlist Statistics for Top Partition
+ 20. Elapsed Time Per Partition
+ 21. Analysis & Synthesis Messages
 
 
 
@@ -50,13 +53,13 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +---------------------------------+------------------------------------------------+
-; Analysis & Synthesis Status     ; Successful - Sat Nov 15 16:15:16 2025          ;
+; Analysis & Synthesis Status     ; Successful - Sat Nov 15 21:58:38 2025          ;
 ; Quartus Prime Version           ; 22.1std.1 Build 917 02/14/2023 SC Lite Edition ;
 ; Revision Name                   ; Sistema                                        ;
 ; Top-level Entity Name           ; Sistema                                        ;
 ; Family                          ; Cyclone V                                      ;
 ; Logic utilization (in ALMs)     ; N/A                                            ;
-; Total registers                 ; 78                                             ;
+; Total registers                 ; 37                                             ;
 ; Total pins                      ; 32                                             ;
 ; Total virtual pins              ; 0                                              ;
 ; Total block memory bits         ; 0                                              ;
@@ -185,6 +188,7 @@ https://fpgasoftware.intel.com/eula.
 ; svc_risk_analysis.vhd            ; yes             ; User VHDL File  ; C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_risk_analysis.vhd ;         ;
 ; ms_eval_tariff.vhd               ; yes             ; User VHDL File  ; C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_eval_tariff.vhd    ;         ;
 ; soa_energy_pkg.vhd               ; yes             ; User VHDL File  ; C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/soa_energy_pkg.vhd    ;         ;
+; ms_risk_index.vhd                ; yes             ; User VHDL File  ; C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_risk_index.vhd     ;         ;
 +----------------------------------+-----------------+-----------------+----------------------------------------------------------------------------------+---------+
 
 
@@ -193,25 +197,25 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------+-----------+
 ; Resource                                    ; Usage     ;
 +---------------------------------------------+-----------+
-; Estimate of Logic utilization (ALMs needed) ; 41        ;
+; Estimate of Logic utilization (ALMs needed) ; 21        ;
 ;                                             ;           ;
-; Combinational ALUT usage for logic          ; 39        ;
+; Combinational ALUT usage for logic          ; 28        ;
 ;     -- 7 input functions                    ; 0         ;
-;     -- 6 input functions                    ; 5         ;
+;     -- 6 input functions                    ; 2         ;
 ;     -- 5 input functions                    ; 3         ;
-;     -- 4 input functions                    ; 3         ;
-;     -- <=3 input functions                  ; 28        ;
+;     -- 4 input functions                    ; 4         ;
+;     -- <=3 input functions                  ; 19        ;
 ;                                             ;           ;
-; Dedicated logic registers                   ; 78        ;
+; Dedicated logic registers                   ; 37        ;
 ;                                             ;           ;
 ; I/O pins                                    ; 32        ;
 ;                                             ;           ;
 ; Total DSP Blocks                            ; 0         ;
 ;                                             ;           ;
 ; Maximum fan-out node                        ; clk~input ;
-; Maximum fan-out                             ; 78        ;
-; Total fan-out                               ; 451       ;
-; Average fan-out                             ; 2.49      ;
+; Maximum fan-out                             ; 37        ;
+; Total fan-out                               ; 251       ;
+; Average fan-out                             ; 1.95      ;
 +---------------------------------------------+-----------+
 
 
@@ -220,11 +224,12 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------------------------------------------------------------------------------------+-------------------+--------------+
 ; Compilation Hierarchy Node            ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                  ; Entity Name       ; Library Name ;
 +---------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------------------------------------------------------------------------------------+-------------------+--------------+
-; |Sistema                              ; 39 (0)              ; 78 (0)                    ; 0                 ; 0          ; 32   ; 0            ; |Sistema                                                                             ; Sistema           ; work         ;
-;    |svc_broker:u_broker|              ; 27 (14)             ; 53 (23)                   ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_broker:u_broker                                                         ; svc_broker        ; work         ;
-;       |svc_risk_analysis:u_svc_risk|  ; 13 (4)              ; 30 (13)                   ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk                            ; svc_risk_analysis ; work         ;
-;          |ms_eval_tariff:u_ms_tariff| ; 9 (9)               ; 17 (17)                   ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff ; ms_eval_tariff    ; work         ;
-;    |svc_client:u_client|              ; 12 (12)             ; 25 (25)                   ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_client:u_client                                                         ; svc_client        ; work         ;
+; |Sistema                              ; 28 (0)              ; 37 (0)                    ; 0                 ; 0          ; 32   ; 0            ; |Sistema                                                                             ; Sistema           ; work         ;
+;    |svc_broker:u_broker|              ; 18 (7)              ; 25 (10)                   ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_broker:u_broker                                                         ; svc_broker        ; work         ;
+;       |svc_risk_analysis:u_svc_risk|  ; 11 (7)              ; 15 (7)                    ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk                            ; svc_risk_analysis ; work         ;
+;          |ms_eval_tariff:u_ms_tariff| ; 2 (2)               ; 4 (4)                     ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff ; ms_eval_tariff    ; work         ;
+;          |ms_risk_index:u_ms_index|   ; 2 (2)               ; 4 (4)                     ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index   ; ms_risk_index     ; work         ;
+;    |svc_client:u_client|              ; 10 (10)             ; 12 (12)                   ; 0                 ; 0          ; 0    ; 0            ; |Sistema|svc_client:u_client                                                         ; svc_client        ; work         ;
 +---------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------------------------------------------------------------------------------------+-------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
@@ -245,19 +250,31 @@ Encoding Type:  One-Hot
 
 
 Encoding Type:  One-Hot
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; State Machine - |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|state                                                                                 ;
-+----------------------+--------------+--------------------+--------------------+---------------------+---------------------+----------------------+--------------+
-; Name                 ; state.S_DONE ; state.S_WAIT_INDEX ; state.S_CALL_INDEX ; state.S_WAIT_TARIFF ; state.S_CALL_TARIFF ; state.S_CALL_PROFILE ; state.S_IDLE ;
-+----------------------+--------------+--------------------+--------------------+---------------------+---------------------+----------------------+--------------+
-; state.S_IDLE         ; 0            ; 0                  ; 0                  ; 0                   ; 0                   ; 0                    ; 0            ;
-; state.S_CALL_PROFILE ; 0            ; 0                  ; 0                  ; 0                   ; 0                   ; 1                    ; 1            ;
-; state.S_CALL_TARIFF  ; 0            ; 0                  ; 0                  ; 0                   ; 1                   ; 0                    ; 1            ;
-; state.S_WAIT_TARIFF  ; 0            ; 0                  ; 0                  ; 1                   ; 0                   ; 0                    ; 1            ;
-; state.S_CALL_INDEX   ; 0            ; 0                  ; 1                  ; 0                   ; 0                   ; 0                    ; 1            ;
-; state.S_WAIT_INDEX   ; 0            ; 1                  ; 0                  ; 0                   ; 0                   ; 0                    ; 1            ;
-; state.S_DONE         ; 1            ; 0                  ; 0                  ; 0                   ; 0                   ; 0                    ; 1            ;
-+----------------------+--------------+--------------------+--------------------+---------------------+---------------------+----------------------+--------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|state                                                                                   ;
++-----------------------+--------------+--------------------+--------------------+-----------------------+---------------------+---------------------+--------------+
+; Name                  ; state.S_DONE ; state.S_WAIT_INDEX ; state.S_CALL_INDEX ; state.S_COMPUTE_SCORE ; state.S_WAIT_TARIFF ; state.S_CALL_TARIFF ; state.S_IDLE ;
++-----------------------+--------------+--------------------+--------------------+-----------------------+---------------------+---------------------+--------------+
+; state.S_IDLE          ; 0            ; 0                  ; 0                  ; 0                     ; 0                   ; 0                   ; 0            ;
+; state.S_CALL_TARIFF   ; 0            ; 0                  ; 0                  ; 0                     ; 0                   ; 1                   ; 1            ;
+; state.S_WAIT_TARIFF   ; 0            ; 0                  ; 0                  ; 0                     ; 1                   ; 0                   ; 1            ;
+; state.S_COMPUTE_SCORE ; 0            ; 0                  ; 0                  ; 1                     ; 0                   ; 0                   ; 1            ;
+; state.S_CALL_INDEX    ; 0            ; 0                  ; 1                  ; 0                     ; 0                   ; 0                   ; 1            ;
+; state.S_WAIT_INDEX    ; 0            ; 1                  ; 0                  ; 0                     ; 0                   ; 0                   ; 1            ;
+; state.S_DONE          ; 1            ; 0                  ; 0                  ; 0                     ; 0                   ; 0                   ; 1            ;
++-----------------------+--------------+--------------------+--------------------+-----------------------+---------------------+---------------------+--------------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------------------------------------------------+
+; State Machine - |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|state ;
++------------------+---------------+------------------+----------------------------------------------------+
+; Name             ; state.MS_DONE ; state.MS_PROCESS ; state.MS_IDLE                                      ;
++------------------+---------------+------------------+----------------------------------------------------+
+; state.MS_IDLE    ; 0             ; 0                ; 0                                                  ;
+; state.MS_PROCESS ; 0             ; 1                ; 1                                                  ;
+; state.MS_DONE    ; 1             ; 0                ; 1                                                  ;
++------------------+---------------+------------------+----------------------------------------------------+
 
 
 Encoding Type:  One-Hot
@@ -286,35 +303,105 @@ Encoding Type:  One-Hot
 +--------------------+--------------------+--------------------+-------------------+------------------+---------------+
 
 
-+---------------------------------------------------------------------------------------------------------------------------------------+
-; Registers Removed During Synthesis                                                                                                    ;
-+----------------------------------------------------------------------------------------------+----------------------------------------+
-; Register name                                                                                ; Reason for Removal                     ;
-+----------------------------------------------------------------------------------------------+----------------------------------------+
-; svc_client:u_client|reg_req_data[6,7]                                                        ; Stuck at GND due to stuck port data_in ;
-; svc_broker:u_broker|reg_req_data[6,7]                                                        ; Stuck at GND due to stuck port data_in ;
-; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_in[6,7] ; Stuck at GND due to stuck port data_in ;
-; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[7]  ; Stuck at GND due to stuck port data_in ;
-; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[7]                               ; Stuck at GND due to stuck port data_in ;
-; svc_broker:u_broker|reg_resp_data[7]                                                         ; Stuck at GND due to stuck port data_in ;
-; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|state.S_WAIT_INDEX                          ; Stuck at GND due to stuck port data_in ;
-; Total Number of Removed Registers = 10                                                       ;                                        ;
-+----------------------------------------------------------------------------------------------+----------------------------------------+
++---------------------------------------------------------------------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                                                                                ;
++------------------------------------------------------------------------------------------------+--------------------------------------------------+
+; Register name                                                                                  ; Reason for Removal                               ;
++------------------------------------------------------------------------------------------------+--------------------------------------------------+
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[4..7]                         ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[3..5] ; Stuck at GND due to stuck port data_in           ;
+; svc_client:u_client|reg_req_data[6,7]                                                          ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|reg_req_data[6,7]                                                          ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[3..5]                       ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[2..7]        ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_in[6,7]   ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[2..7]                              ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[1,2]  ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|reg_resp_data[2..7]                                                        ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[1,2]                        ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[5..7]                               ; Stuck at GND due to stuck port data_in           ;
+; svc_client:u_client|reg_resp_data[2..6]                                                        ; Merged with svc_client:u_client|reg_resp_data[7] ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[0]                                  ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[0]                            ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[1]                                  ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[1]                            ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[2..4]                               ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[3]                            ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[0]                          ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[0]    ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[2]                            ; Lost fanout                                      ;
+; svc_broker:u_broker|reg_req_data[2]                                                            ; Lost fanout                                      ;
+; svc_client:u_client|reg_req_data[2]                                                            ; Lost fanout                                      ;
+; svc_broker:u_broker|reg_req_data[4]                                                            ; Lost fanout                                      ;
+; svc_client:u_client|reg_req_data[4]                                                            ; Lost fanout                                      ;
+; svc_broker:u_broker|reg_req_data[3]                                                            ; Lost fanout                                      ;
+; svc_client:u_client|reg_req_data[3]                                                            ; Lost fanout                                      ;
+; svc_broker:u_broker|reg_req_data[5]                                                            ; Lost fanout                                      ;
+; svc_client:u_client|reg_req_data[5]                                                            ; Lost fanout                                      ;
+; svc_broker:u_broker|reg_req_data[0]                                                            ; Lost fanout                                      ;
+; svc_client:u_client|reg_req_data[0]                                                            ; Lost fanout                                      ;
+; svc_broker:u_broker|reg_req_data[1]                                                            ; Lost fanout                                      ;
+; svc_client:u_client|reg_req_data[1]                                                            ; Lost fanout                                      ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[0,1]         ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[0,1]                               ; Stuck at GND due to stuck port data_in           ;
+; svc_broker:u_broker|reg_resp_data[0,1]                                                         ; Stuck at GND due to stuck port data_in           ;
+; svc_client:u_client|reg_resp_data[1,7]                                                         ; Merged with svc_client:u_client|reg_resp_data[0] ;
+; Total Number of Removed Registers = 77                                                         ;                                                  ;
++------------------------------------------------------------------------------------------------+--------------------------------------------------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Removed Registers Triggering Further Register Optimizations                                                                                                    ;
-+-------------------------------------+---------------------------+----------------------------------------------------------------------------------------------+
-; Register name                       ; Reason for Removal        ; Registers Removed due to This Register                                                       ;
-+-------------------------------------+---------------------------+----------------------------------------------------------------------------------------------+
-; svc_client:u_client|reg_req_data[7] ; Stuck at GND              ; svc_broker:u_broker|reg_req_data[7],                                                         ;
-;                                     ; due to stuck port data_in ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_in[7],  ;
-;                                     ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[7], ;
-;                                     ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[7],                              ;
-;                                     ;                           ; svc_broker:u_broker|reg_resp_data[7]                                                         ;
-; svc_client:u_client|reg_req_data[6] ; Stuck at GND              ; svc_broker:u_broker|reg_req_data[6],                                                         ;
-;                                     ; due to stuck port data_in ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_in[6]   ;
-+-------------------------------------+---------------------------+----------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                                                                                                            ;
++---------------------------------------------------------------------------------------------+---------------------------+----------------------------------------------------------------------------------------------+
+; Register name                                                                               ; Reason for Removal        ; Registers Removed due to This Register                                                       ;
++---------------------------------------------------------------------------------------------+---------------------------+----------------------------------------------------------------------------------------------+
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[0]                               ; Lost Fanouts              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[0],                         ;
+;                                                                                             ;                           ; svc_broker:u_broker|reg_req_data[2], svc_client:u_client|reg_req_data[2],                    ;
+;                                                                                             ;                           ; svc_broker:u_broker|reg_req_data[4], svc_client:u_client|reg_req_data[4],                    ;
+;                                                                                             ;                           ; svc_broker:u_broker|reg_req_data[3], svc_client:u_client|reg_req_data[3],                    ;
+;                                                                                             ;                           ; svc_broker:u_broker|reg_req_data[5], svc_client:u_client|reg_req_data[5],                    ;
+;                                                                                             ;                           ; svc_broker:u_broker|reg_req_data[0], svc_client:u_client|reg_req_data[0],                    ;
+;                                                                                             ;                           ; svc_broker:u_broker|reg_req_data[1], svc_client:u_client|reg_req_data[1]                     ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[7]                         ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[7],                               ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[6],                               ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[5],                               ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[0],                       ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[0], ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[0],        ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[1],        ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[0],                              ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[1],                              ;
+;                                                                                             ;                           ; svc_broker:u_broker|reg_resp_data[0], svc_broker:u_broker|reg_resp_data[1]                   ;
+; svc_client:u_client|reg_req_data[7]                                                         ; Stuck at GND              ; svc_broker:u_broker|reg_req_data[7],                                                         ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_in[7],  ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[2], ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[1], ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[2],                       ;
+;                                                                                             ;                           ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[1]                        ;
+; svc_client:u_client|reg_req_data[6]                                                         ; Stuck at GND              ; svc_broker:u_broker|reg_req_data[6],                                                         ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_in[6]   ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[7]        ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[7],                              ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|reg_resp_data[7]                                                         ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[6]        ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[6],                              ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|reg_resp_data[6]                                                         ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[5]        ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[5],                              ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|reg_resp_data[5]                                                         ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[4]        ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[4],                              ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|reg_resp_data[4]                                                         ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[3]        ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[3],                              ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|reg_resp_data[3]                                                         ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index|reg_out[2]        ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_result[2],                              ;
+;                                                                                             ; due to stuck port data_in ; svc_broker:u_broker|reg_resp_data[2]                                                         ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[5] ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[5]                        ;
+;                                                                                             ; due to stuck port data_in ;                                                                                              ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[4] ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[4]                        ;
+;                                                                                             ; due to stuck port data_in ;                                                                                              ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff|reg_data_out[3] ; Stuck at GND              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_tariff_weight[3]                        ;
+;                                                                                             ; due to stuck port data_in ;                                                                                              ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[1]                               ; Lost Fanouts              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[1]                          ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[2]                               ; Lost Fanouts              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[2]                          ;
+; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_score[3]                               ; Lost Fanouts              ; svc_broker:u_broker|svc_risk_analysis:u_svc_risk|reg_total_level[3]                          ;
++---------------------------------------------------------------------------------------------+---------------------------+----------------------------------------------------------------------------------------------+
 
 
 +------------------------------------------------------+
@@ -322,14 +409,32 @@ Encoding Type:  One-Hot
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 78    ;
+; Total registers                              ; 37    ;
 ; Number of registers using Synchronous Clear  ; 0     ;
 ; Number of registers using Synchronous Load   ; 0     ;
-; Number of registers using Asynchronous Clear ; 78    ;
+; Number of registers using Asynchronous Clear ; 37    ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 57    ;
+; Number of registers using Clock Enable       ; 10    ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                    ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                          ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------+
+; 7:1                ; 3 bits    ; 12 LEs        ; 9 LEs                ; 3 LEs                  ; No         ; |Sistema|svc_broker:u_broker|svc_risk_analysis:u_svc_risk|Selector1 ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------+
+
+
++--------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff"                  ;
++----------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port           ; Type   ; Severity ; Details                                                                             ;
++----------------+--------+----------+-------------------------------------------------------------------------------------+
+; data_out[7..6] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++----------------+--------+----------+-------------------------------------------------------------------------------------+
 
 
 +----------------------------------------------------------------------------------------------------------------+
@@ -346,22 +451,22 @@ Encoding Type:  One-Hot
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; arriav_ff             ; 78                          ;
-;     CLR               ; 21                          ;
-;     ENA CLR           ; 57                          ;
-; arriav_lcell_comb     ; 40                          ;
-;     normal            ; 40                          ;
+; arriav_ff             ; 37                          ;
+;     CLR               ; 27                          ;
+;     ENA CLR           ; 10                          ;
+; arriav_lcell_comb     ; 29                          ;
+;     normal            ; 29                          ;
 ;         0 data inputs ; 1                           ;
-;         1 data inputs ; 2                           ;
-;         2 data inputs ; 17                          ;
-;         3 data inputs ; 9                           ;
-;         4 data inputs ; 3                           ;
+;         1 data inputs ; 1                           ;
+;         2 data inputs ; 8                           ;
+;         3 data inputs ; 10                          ;
+;         4 data inputs ; 4                           ;
 ;         5 data inputs ; 3                           ;
-;         6 data inputs ; 5                           ;
+;         6 data inputs ; 2                           ;
 ; boundary_port         ; 32                          ;
 ;                       ;                             ;
-; Max LUT depth         ; 1.00                        ;
-; Average LUT depth     ; 0.63                        ;
+; Max LUT depth         ; 2.00                        ;
+; Average LUT depth     ; 0.96                        ;
 +-----------------------+-----------------------------+
 
 
@@ -380,7 +485,7 @@ Encoding Type:  One-Hot
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 22.1std.1 Build 917 02/14/2023 SC Lite Edition
-    Info: Processing started: Sat Nov 15 16:15:06 2025
+    Info: Processing started: Sat Nov 15 21:58:28 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off SistemaGestaoConsumoEletrico -c Sistema
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 10 of the 10 processors detected
@@ -401,6 +506,21 @@ Info (12021): Found 2 design units, including 1 entities, in source file ms_eval
     Info (12023): Found entity 1: ms_eval_tariff File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_eval_tariff.vhd Line: 6
 Info (12021): Found 1 design units, including 0 entities, in source file soa_energy_pkg.vhd
     Info (12022): Found design unit 1: soa_energy_pkg File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/soa_energy_pkg.vhd Line: 5
+Info (12021): Found 2 design units, including 1 entities, in source file ms_read_load_c1.vhd
+    Info (12022): Found design unit 1: ms_read_load_c1-rtl File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_read_load_c1.vhd Line: 17
+    Info (12023): Found entity 1: ms_read_load_c1 File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_read_load_c1.vhd Line: 6
+Info (12021): Found 2 design units, including 1 entities, in source file ms_read_load_c2.vhd
+    Info (12022): Found design unit 1: ms_read_load_c2-rtl File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_read_load_c2.vhd Line: 17
+    Info (12023): Found entity 1: ms_read_load_c2 File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_read_load_c2.vhd Line: 6
+Info (12021): Found 2 design units, including 1 entities, in source file ms_read_load_c3.vhd
+    Info (12022): Found design unit 1: ms_read_load_c3-rtl File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_read_load_c3.vhd Line: 17
+    Info (12023): Found entity 1: ms_read_load_c3 File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_read_load_c3.vhd Line: 6
+Info (12021): Found 2 design units, including 1 entities, in source file ms_calc_partial_power.vhd
+    Info (12022): Found design unit 1: ms_calc_partial_power-rtl File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_calc_partial_power.vhd Line: 17
+    Info (12023): Found entity 1: ms_calc_partial_power File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_calc_partial_power.vhd Line: 6
+Info (12021): Found 2 design units, including 1 entities, in source file ms_risk_index.vhd
+    Info (12022): Found design unit 1: ms_risk_index-rtl File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_risk_index.vhd Line: 17
+    Info (12023): Found entity 1: ms_risk_index File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/ms_risk_index.vhd Line: 6
 Info (12127): Elaborating entity "Sistema" for the top level hierarchy
 Info (12128): Elaborating entity "svc_client" for hierarchy "svc_client:u_client" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 40
 Warning (10036): Verilog HDL or VHDL warning at svc_client.vhd(37): object "btn_req_edge" assigned a value but never read File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_client.vhd Line: 37
@@ -408,7 +528,11 @@ Warning (10492): VHDL Process Statement warning at svc_client.vhd(91): signal "b
 Info (12128): Elaborating entity "svc_broker" for hierarchy "svc_broker:u_broker" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 64
 Warning (10036): Verilog HDL or VHDL warning at svc_broker.vhd(30): object "svc_risk_busy" assigned a value but never read File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_broker.vhd Line: 30
 Info (12128): Elaborating entity "svc_risk_analysis" for hierarchy "svc_broker:u_broker|svc_risk_analysis:u_svc_risk" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_broker.vhd Line: 45
-Info (12128): Elaborating entity "ms_eval_tariff" for hierarchy "svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_risk_analysis.vhd Line: 47
+Warning (10492): VHDL Process Statement warning at svc_risk_analysis.vhd(162): signal "reg_score" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_risk_analysis.vhd Line: 162
+Warning (10492): VHDL Process Statement warning at svc_risk_analysis.vhd(176): signal "data_in" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_risk_analysis.vhd Line: 176
+Warning (10492): VHDL Process Statement warning at svc_risk_analysis.vhd(193): signal "reg_score" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_risk_analysis.vhd Line: 193
+Info (12128): Elaborating entity "ms_eval_tariff" for hierarchy "svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_eval_tariff:u_ms_tariff" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_risk_analysis.vhd Line: 63
+Info (12128): Elaborating entity "ms_risk_index" for hierarchy "svc_broker:u_broker|svc_risk_analysis:u_svc_risk|ms_risk_index:u_ms_index" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/svc_risk_analysis.vhd Line: 76
 Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "disp7_an[0]" is stuck at VCC File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 17
     Warning (13410): Pin "disp7_an[1]" is stuck at VCC File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 17
@@ -422,16 +546,24 @@ Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "disp7_seg[5]" is stuck at VCC File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 18
     Warning (13410): Pin "disp7_seg[6]" is stuck at VCC File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 18
 Info (286030): Timing-Driven Synthesis is running
+Info (17049): 23 registers lost all their fanouts during netlist optimizations.
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Info (21057): Implemented 125 device resources after synthesis - the final resource count might be different
+Warning (21074): Design contains 6 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "sw[6]" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 12
+    Warning (15610): No output dependent on input pin "sw[8]" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 12
+    Warning (15610): No output dependent on input pin "sw[7]" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 12
+    Warning (15610): No output dependent on input pin "sw[9]" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 12
+    Warning (15610): No output dependent on input pin "sw[4]" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 12
+    Warning (15610): No output dependent on input pin "sw[5]" File: C:/Dev/Faculdade/DLP/Projetos/SistemaGestaoConsumoEletrico/Sistema.vhd Line: 12
+Info (21057): Implemented 79 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 13 input pins
     Info (21059): Implemented 19 output pins
-    Info (21061): Implemented 93 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 16 warnings
-    Info: Peak virtual memory: 4969 megabytes
-    Info: Processing ended: Sat Nov 15 16:15:16 2025
+    Info (21061): Implemented 47 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 26 warnings
+    Info: Peak virtual memory: 4961 megabytes
+    Info: Processing ended: Sat Nov 15 21:58:38 2025
     Info: Elapsed time: 00:00:10
-    Info: Total CPU time (on all processors): 00:00:20
+    Info: Total CPU time (on all processors): 00:00:21
 
 

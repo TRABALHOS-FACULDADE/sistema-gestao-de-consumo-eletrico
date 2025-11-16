@@ -52,9 +52,13 @@ begin
                     end if;
 
                 when MS_PROCESS =>
-                    -- lógica de teste: soma 1
-                    reg_data_out <= std_logic_vector(unsigned(reg_data_in) + 1);
-                    state        <= MS_DONE;
+                    case reg_data_in(7 downto 6) is
+							 when "00" => reg_data_out <= x"01"; -- verde  -> peso 1
+							 when "01" => reg_data_out <= x"02"; -- amarela-> peso 2
+							 when "10" => reg_data_out <= x"03"; -- vermelha->peso3
+							 when others => reg_data_out <= x"04"; -- especial->peso4
+						  end case;
+                    state <= MS_DONE;
 
                 when MS_DONE =>
                     done  <= '1';      -- avisa 1 ciclo que terminou
