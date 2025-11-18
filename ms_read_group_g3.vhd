@@ -3,22 +3,28 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.soa_resource_pkg.all;
 
-entity ms_risk_index is
+-- Lê o nível do Grupo 3 (bits 5..4 de data_in)
+-- e o devolve nos 2 LSB de data_out.
+
+entity ms_read_group_g3 is
     port (
         clk      : in  std_logic;
         rst_n    : in  std_logic;
         req      : in  std_logic;
         done     : out std_logic;
-        data_in  : in  std_logic_vector(C_DATA_WIDTH-1 downto 0); -- score de risco
-        data_out : out std_logic_vector(C_DATA_WIDTH-1 downto 0)  -- código de risco
-    );
-end ms_risk_index;
 
-architecture rtl of ms_risk_index is
+        data_in  : in  std_logic_vector(C_DATA_WIDTH-1 downto 0);
+        data_out : out std_logic_vector(C_DATA_WIDTH-1 downto 0)
+    );
+end ms_read_group_g3;
+
+architecture rtl of ms_read_group_g3 is
+
     type t_state is (MS_IDLE, MS_PROCESS, MS_DONE);
     signal state : t_state;
 
     signal reg_out : std_logic_vector(C_DATA_WIDTH-1 downto 0);
+
 begin
     data_out <= reg_out;
 
@@ -34,17 +40,8 @@ begin
             case state is
                 when MS_IDLE =>
                     if req = '1' then
-                        -- thresholds simples
-                        if unsigned(data_in) < 64 then
-                            reg_out <= (others => '0');
-                            reg_out(1 downto 0) <= RISK_OK_CODE;
-                        elsif unsigned(data_in) < 128 then
-                            reg_out <= (others => '0');
-                            reg_out(1 downto 0) <= RISK_WARN_CODE;
-                        else
-                            reg_out <= (others => '0');
-                            reg_out(1 downto 0) <= RISK_CRIT_CODE;
-                        end if;
+                        reg_out <= (others => '0');
+                        reg_out(1 downto 0) <= data_in(5 downto 4);  -- nível G3
                         state <= MS_PROCESS;
                     end if;
 
@@ -60,4 +57,5 @@ begin
             end case;
         end if;
     end process;
+
 end architecture rtl;

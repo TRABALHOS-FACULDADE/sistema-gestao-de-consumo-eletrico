@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use work.soa_energy_pkg.all;
+use work.soa_resource_pkg.all;
 
 entity ms_eval_tariff is
     port (
