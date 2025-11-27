@@ -40,8 +40,7 @@ begin
             case state is
                 when MS_IDLE =>
                     if req = '1' then
-                        reg_out <= (others => '0');
-                        reg_out(1 downto 0) <= data_in(3 downto 2);  -- nível G2
+                        reg_out <= "000000" & data_in(1 downto 0);
                         state <= MS_PROCESS;
                     end if;
 

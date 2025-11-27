@@ -45,14 +45,17 @@ architecture rtl of svc_resource_profile is
         S_IDLE,
         S_READ1,
         S_WAIT_READ1,
+        S_STORE_LVL1,
         S_USE1,
         S_WAIT_USE1,
         S_READ2,
         S_WAIT_READ2,
+        S_STORE_LVL2,
         S_USE2,
         S_WAIT_USE2,
         S_READ3,
         S_WAIT_READ3,
+        S_STORE_LVL3,
         S_USE3,
         S_WAIT_USE3,
         S_SUM,
@@ -80,12 +83,17 @@ architecture rtl of svc_resource_profile is
     signal use_data_out      : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 
     --------------------------------------------------------------------
-    -- Registradores internos para usos individuais e total
+    -- Registradores internos para níveis, usos individuais e total
     --------------------------------------------------------------------
-    signal reg_use1   : std_logic_vector(C_DATA_WIDTH-1 downto 0);
-    signal reg_use2   : std_logic_vector(C_DATA_WIDTH-1 downto 0);
-    signal reg_use3   : std_logic_vector(C_DATA_WIDTH-1 downto 0);
-    signal reg_result : std_logic_vector(C_DATA_WIDTH-1 downto 0);
+    signal reg_level1  : std_logic_vector(1 downto 0);
+    signal reg_level2  : std_logic_vector(1 downto 0);
+    signal reg_level3  : std_logic_vector(1 downto 0);
+
+    signal reg_use1    : std_logic_vector(C_DATA_WIDTH-1 downto 0);
+    signal reg_use2    : std_logic_vector(C_DATA_WIDTH-1 downto 0);
+    signal reg_use3    : std_logic_vector(C_DATA_WIDTH-1 downto 0);
+
+    signal reg_result  : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 
 begin
 
@@ -140,51 +148,73 @@ begin
     data_out <= reg_result;
 
     --------------------------------------------------------------------
-    -- Registrador de estado da FSM
-    --------------------------------------------------------------------
-    process(clk, rst_n)
-    begin
-        if rst_n = '0' then
-            state <= S_IDLE;
-        elsif rising_edge(clk) then
-            state <= next_state;
-        end if;
-    end process;
-
-    --------------------------------------------------------------------
-    -- Registradores de usos individuais e total
+    -- Registrador de estado da FSM + registradores de dados
     --------------------------------------------------------------------
     process(clk, rst_n)
         variable v_total : unsigned(C_DATA_WIDTH-1 downto 0);
     begin
         if rst_n = '0' then
+            state      <= S_IDLE;
+            reg_level1 <= (others => '0');
+            reg_level2 <= (others => '0');
+            reg_level3 <= (others => '0');
             reg_use1   <= (others => '0');
             reg_use2   <= (others => '0');
             reg_use3   <= (others => '0');
             reg_result <= (others => '0');
 
         elsif rising_edge(clk) then
+            state <= next_state;
 
+            ----------------------------------------------------------------
+            -- Captura níveis lidos pelos micro-serviços de leitura
+            ----------------------------------------------------------------
+            if (state = S_STORE_LVL1) then
+                reg_level1 <= read1_data_out(1 downto 0);
+            end if;
+
+            if (state = S_STORE_LVL2) then
+                reg_level2 <= read2_data_out(1 downto 0);
+            end if;
+
+            if (state = S_STORE_LVL3) then
+                reg_level3 <= read3_data_out(1 downto 0);
+            end if;
+
+            ----------------------------------------------------------------
             -- Armazena uso do Grupo 1 quando cálculo termina
+            ----------------------------------------------------------------
             if (state = S_WAIT_USE1) and (use_done = '1') then
                 reg_use1 <= use_data_out;
             end if;
 
+            ----------------------------------------------------------------
             -- Armazena uso do Grupo 2
+            ----------------------------------------------------------------
             if (state = S_WAIT_USE2) and (use_done = '1') then
                 reg_use2 <= use_data_out;
             end if;
 
+            ----------------------------------------------------------------
             -- Armazena uso do Grupo 3
+            ----------------------------------------------------------------
             if (state = S_WAIT_USE3) and (use_done = '1') then
                 reg_use3 <= use_data_out;
             end if;
 
-            -- Soma total dos usos dos grupos
+            ----------------------------------------------------------------
+            -- Soma total dos usos dos grupos em S_SUM
+            ----------------------------------------------------------------
             if (state = S_SUM) then
                 v_total := resize(unsigned(reg_use1), C_DATA_WIDTH)
                          + resize(unsigned(reg_use2), C_DATA_WIDTH)
                          + resize(unsigned(reg_use3), C_DATA_WIDTH);
+
+                -- (opcional) saturação para evitar overflow em futuras mudanças
+                if v_total > to_unsigned(255, C_DATA_WIDTH) then
+                    v_total := to_unsigned(255, C_DATA_WIDTH);
+                end if;
+
                 reg_result <= std_logic_vector(v_total);
             end if;
 
@@ -194,20 +224,23 @@ begin
     --------------------------------------------------------------------
     -- FSM combinacional do serviço
     --------------------------------------------------------------------
-    process(state, req, read1_done, read2_done, read3_done, use_done)
+    process(state, req,
+            read1_done, read2_done, read3_done,
+            use_done,
+            reg_level1, reg_level2, reg_level3)
     begin
         -- valores padrão
-        busy  <= '0';
-        done  <= '0';
+        busy        <= '0';
+        done        <= '0';
 
-        read1_req <= '0';
-        read2_req <= '0';
-        read3_req <= '0';
+        read1_req   <= '0';
+        read2_req   <= '0';
+        read3_req   <= '0';
 
-        use_req    <= '0';
-        use_data_in<= (others => '0');
+        use_req     <= '0';
+        use_data_in <= (others => '0');
 
-        next_state <= state;
+        next_state  <= state;
 
         case state is
 
@@ -218,24 +251,30 @@ begin
                 end if;
 
             ----------------------------------------------------------------
-            -- Grupo 1
+            -- Grupo 1: leitura de nível
             ----------------------------------------------------------------
             when S_READ1 =>
                 busy      <= '1';
-                read1_req <= '1';
+                read1_req <= '1';          -- pede leitura do nível de G1
                 next_state<= S_WAIT_READ1;
 
             when S_WAIT_READ1 =>
                 busy <= '1';
                 if read1_done = '1' then
-                    next_state <= S_USE1;
+                    next_state <= S_STORE_LVL1;
                 end if;
 
+            when S_STORE_LVL1 =>
+                busy       <= '1';
+                -- nível de G1 será armazenado em reg_level1 no process síncrono
+                next_state <= S_USE1;
+
+            -- Grupo 1: cálculo de uso
             when S_USE1 =>
-                busy        <= '1';
-                use_req     <= '1';
-                use_data_in <= read1_data_out;  -- nível do Grupo 1
-                next_state  <= S_WAIT_USE1;
+                busy               <= '1';
+                use_req            <= '1';
+                use_data_in(1 downto 0) <= reg_level1;  -- nível de G1
+                next_state         <= S_WAIT_USE1;
 
             when S_WAIT_USE1 =>
                 busy <= '1';
@@ -244,7 +283,7 @@ begin
                 end if;
 
             ----------------------------------------------------------------
-            -- Grupo 2
+            -- Grupo 2: leitura de nível
             ----------------------------------------------------------------
             when S_READ2 =>
                 busy      <= '1';
@@ -254,14 +293,20 @@ begin
             when S_WAIT_READ2 =>
                 busy <= '1';
                 if read2_done = '1' then
-                    next_state <= S_USE2;
+                    next_state <= S_STORE_LVL2;
                 end if;
 
+            when S_STORE_LVL2 =>
+                busy       <= '1';
+                -- nível de G2 será armazenado em reg_level2
+                next_state <= S_USE2;
+
+            -- Grupo 2: cálculo de uso
             when S_USE2 =>
-                busy        <= '1';
-                use_req     <= '1';
-                use_data_in <= read2_data_out;  -- nível do Grupo 2
-                next_state  <= S_WAIT_USE2;
+                busy               <= '1';
+                use_req            <= '1';
+                use_data_in(1 downto 0) <= reg_level2;  -- nível de G2
+                next_state         <= S_WAIT_USE2;
 
             when S_WAIT_USE2 =>
                 busy <= '1';
@@ -270,7 +315,7 @@ begin
                 end if;
 
             ----------------------------------------------------------------
-            -- Grupo 3
+            -- Grupo 3: leitura de nível
             ----------------------------------------------------------------
             when S_READ3 =>
                 busy      <= '1';
@@ -280,14 +325,20 @@ begin
             when S_WAIT_READ3 =>
                 busy <= '1';
                 if read3_done = '1' then
-                    next_state <= S_USE3;
+                    next_state <= S_STORE_LVL3;
                 end if;
 
+            when S_STORE_LVL3 =>
+                busy       <= '1';
+                -- nível de G3 será armazenado em reg_level3
+                next_state <= S_USE3;
+
+            -- Grupo 3: cálculo de uso
             when S_USE3 =>
-                busy        <= '1';
-                use_req     <= '1';
-                use_data_in <= read3_data_out;  -- nível do Grupo 3
-                next_state  <= S_WAIT_USE3;
+                busy               <= '1';
+                use_req            <= '1';
+                use_data_in(1 downto 0) <= reg_level3;  -- nível de G3
+                next_state         <= S_WAIT_USE3;
 
             when S_WAIT_USE3 =>
                 busy <= '1';

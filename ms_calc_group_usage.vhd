@@ -61,13 +61,13 @@ begin
                         -- usando to_unsigned para adequar à largura C_DATA_WIDTH
                         case data_in(1 downto 0) is
                             when "00" =>
-                                reg_out <= std_logic_vector(to_unsigned(4,  C_DATA_WIDTH));  -- 4
+                                reg_out <= std_logic_vector(to_unsigned(0,  C_DATA_WIDTH));  -- 0
                             when "01" =>
-                                reg_out <= std_logic_vector(to_unsigned(8,  C_DATA_WIDTH));  -- 8
+                                reg_out <= std_logic_vector(to_unsigned(4,  C_DATA_WIDTH));  -- 4
                             when "10" =>
-                                reg_out <= std_logic_vector(to_unsigned(12, C_DATA_WIDTH));  -- 12
+                                reg_out <= std_logic_vector(to_unsigned(8, C_DATA_WIDTH));  -- 8
                             when others =>
-                                reg_out <= std_logic_vector(to_unsigned(16, C_DATA_WIDTH));  -- 16
+                                reg_out <= std_logic_vector(to_unsigned(12, C_DATA_WIDTH));  -- 12
                         end case;
 
                         state <= MS_PROCESS;
