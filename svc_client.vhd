@@ -70,6 +70,15 @@ architecture rtl of svc_client is
     signal reg_resp_data  : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 
     signal reg_status : std_logic_vector(1 downto 0) := RISK_OK_CODE;
+	 
+	 type t_led_state is (LED_OK, LED_WARN, LED_CRIT, LED_ERROR);
+    signal led_state, led_next : t_led_state;
+	 
+	 --------------------------------------------------------------------
+    -- Contador para piscar LEDs (WARN/CRIT)
+    --------------------------------------------------------------------
+    signal blink_cnt : unsigned(23 downto 0) := (others => '0');
+    signal blink_on  : std_logic;
 
 begin
 
@@ -116,15 +125,12 @@ begin
         lvl_next <= lvl_state;
 
         case lvl_state is
-            ------------------------------------------------------------
             when LV_IDLE =>
                 if (edge_g1 = '1' and sw(2) = '1') or
                    (edge_g2 = '1' and sw(3) = '1') or
                    (edge_g3 = '1' and sw(4) = '1') then
                     lvl_next <= LV_WAIT_RELEASE;
                 end if;
-
-            ------------------------------------------------------------
             when LV_WAIT_RELEASE =>
                 if (btn_g1='1' and btn_g2='1' and btn_g3='1') then
                     lvl_next <= LV_IDLE;
@@ -190,7 +196,7 @@ begin
     level_g2_dbg <= level_g2;
     level_g3_dbg <= level_g3;
 
-    --------------------------------------------------------------------
+	 --------------------------------------------------------------------
     -- FSM PRINCIPAL (client → broker → client)
     --------------------------------------------------------------------
     process(clk, rst_n)
@@ -198,6 +204,9 @@ begin
         if rst_n='0' then
             client_state <= ST_IDLE;
             reg_status   <= RISK_OK_CODE;
+            reg_service_id <= (others => '0');
+            reg_req_data   <= (others => '0');
+            reg_resp_data  <= (others => '0');
 
         elsif rising_edge(clk) then
             client_state <= client_next;
@@ -218,23 +227,12 @@ begin
         end if;
     end process;
 
-    --------------------------------------------------------------------
-    -- Combinação da FSM PRINCIPAL
-    --------------------------------------------------------------------
-    process(client_state, edge_req, resp_valid, reg_status)
+    -- Combinação FSM principal
+    process(client_state, edge_req, resp_valid, reg_service_id, reg_req_data)
     begin
         req_valid      <= '0';
         req_service_id <= reg_service_id;
         req_data       <= reg_req_data;
-
-        leds <= (others=>'0');
-
-        case reg_status is
-            when RISK_OK_CODE   => leds(0) <= '1';
-            when RISK_WARN_CODE => leds(1) <= '1';
-            when RISK_CRIT_CODE => leds(2) <= '1';
-            when others         => leds    <= (others=>'1');
-        end case;
 
         client_next <= client_state;
 
@@ -254,7 +252,68 @@ begin
 
             when ST_SHOW_RESP =>
                 client_next <= ST_IDLE;
+        end case;
+    end process;
 
+    --------------------------------------------------------------------
+    -- FSM de LEDs (MOORE)
+    --------------------------------------------------------------------
+
+    -- Contador de pisca (ajuste o tamanho conforme o clock)
+    process(clk, rst_n)
+    begin
+        if rst_n='0' then
+            blink_cnt <= (others=>'0');
+        elsif rising_edge(clk) then
+            blink_cnt <= blink_cnt + 1;
+        end if;
+    end process;
+
+    blink_on <= std_logic(blink_cnt(23));
+
+    process(clk, rst_n)
+    begin
+        if rst_n='0' then
+            led_state <= LED_OK;
+        elsif rising_edge(clk) then
+            led_state <= led_next;
+        end if;
+    end process;
+
+    process(led_state, reg_status)
+    begin
+        led_next <= led_state;
+
+        case reg_status is
+            when RISK_OK_CODE   => led_next <= LED_OK;
+            when RISK_WARN_CODE => led_next <= LED_WARN;
+            when RISK_CRIT_CODE => led_next <= LED_CRIT;
+            when others         => led_next <= LED_ERROR;
+        end case;
+    end process;
+
+    process(led_state, blink_on)
+    begin
+        leds <= (others=>'0');
+
+        case led_state is
+            when LED_OK =>
+                leds(0) <= '1';
+
+            when LED_WARN =>
+                if blink_on='1' then
+                    leds(1) <= '1';
+                end if;
+
+            when LED_CRIT =>
+                if blink_on='1' then
+                    leds(2) <= '1';
+                end if;
+
+            when LED_ERROR =>
+                if blink_on='1' then
+                    leds <= (others=>'1');
+                end if;
         end case;
     end process;
 
