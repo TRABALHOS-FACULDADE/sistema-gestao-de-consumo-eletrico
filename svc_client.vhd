@@ -126,16 +126,13 @@ begin
 
             ------------------------------------------------------------
             when LV_WAIT_RELEASE =>
-                -- volta quando todos forem liberados
                 if (btn_g1='1' and btn_g2='1' and btn_g3='1') then
                     lvl_next <= LV_IDLE;
                 end if;
         end case;
     end process;
 
-    --------------------------------------------------------------------
     -- Lógica síncrona de incremento (somente quando entra em LV_WAIT_RELEASE)
-    --------------------------------------------------------------------
     process(clk, rst_n)
     begin
         if rst_n = '0' then
