@@ -4,15 +4,13 @@ use ieee.numeric_std.all;
 use work.soa_resource_pkg.all;
 
 entity Sistema_tb is
-end entity Sistema_tb;
+end entity;
 
-architecture tb of Sistema_tb is
+architecture sim of Sistema_tb is
 
     --------------------------------------------------------------------
-    -- Constantes e sinais
+    -- Sinais do DUT (Sistema)
     --------------------------------------------------------------------
-    constant C_CLK_PERIOD : time := 20 ns;  -- 50 MHz
-
     signal clk      : std_logic := '0';
     signal rst_n    : std_logic := '0';
 
@@ -31,7 +29,18 @@ architecture tb of Sistema_tb is
 begin
 
     --------------------------------------------------------------------
-    -- DUT: top-level Sistema
+    -- Clock: 50 MHz (período 20 ns)
+    --------------------------------------------------------------------
+    clk_process : process
+    begin
+        clk <= '0';
+        wait for 10 ns;
+        clk <= '1';
+        wait for 10 ns;
+    end process;
+
+    --------------------------------------------------------------------
+    -- DUT
     --------------------------------------------------------------------
     uut : entity work.Sistema
         port map (
@@ -50,18 +59,11 @@ begin
         );
 
     --------------------------------------------------------------------
-    -- Clock 50 MHz
-    --------------------------------------------------------------------
-    clk_process : process
-    begin
-        clk <= '0';
-        wait for C_CLK_PERIOD / 2;
-        clk <= '1';
-        wait for C_CLK_PERIOD / 2;
-    end process clk_process;
-
-    --------------------------------------------------------------------
-    -- Estímulos: 3 cenários encadeados
+    -- Estímulos
+    --
+    -- Cenário 1: uso baixo → OK
+    -- Cenário 2: uso médio (modo normal) → ALERTA
+    -- Cenário 3: uso alto (modo ruim) → CRÍTICO
     --------------------------------------------------------------------
     stim_proc : process
     begin
@@ -75,92 +77,72 @@ begin
         btn_g2  <= '1';
         btn_g3  <= '1';
 
-        wait for 5 * C_CLK_PERIOD;
+        wait for 100 ns;
         rst_n <= '1';
-        wait for 10 * C_CLK_PERIOD;
+        wait for 100 ns;
 
-        -- Sempre usar o serviço de risco
+        sw <= (others => '0');
         sw(1 downto 0) <= SVC_ID_RESOURCE_RISK;
-
-        -- Habilita os 3 grupos
         sw(2) <= '1';
         sw(3) <= '1';
         sw(4) <= '1';
+        sw(7) <= '1';
 
-        ----------------------------------------------------------------
-        -- CENÁRIO 1: tudo leve → esperado OK
-        --  - níveis todos 0 (estado inicial do client)
-        --  - modo "00" (condição boa)
-        ----------------------------------------------------------------
-        sw(6 downto 5) <= "00";   -- modo bom
-        wait for 10 * C_CLK_PERIOD;
+        -- CENÁRIO 1
+        sw(6 downto 5) <= "00";
 
-        -- pulso em KEY0 (btn_req)
-        btn_req <= '0';
-        wait for 2 * C_CLK_PERIOD;
+        btn_g1 <= '0';  wait for 20 ns;
+        btn_g1 <= '1';  wait for 80 ns;
+
+        btn_g2 <= '0';  wait for 20 ns;
+        btn_g2 <= '1';  wait for 80 ns;
+
+        btn_g3 <= '0';  wait for 20 ns;
+        btn_g3 <= '1';  wait for 80 ns;
+
+        btn_req <= '0'; wait for 20 ns;
         btn_req <= '1';
 
-        -- tempo para client → broker → serviços → resposta
-        wait for 30 * C_CLK_PERIOD;
+        wait for 400 ns;
+		  
+        -- CENÁRIO 2
+        sw(6 downto 5) <= "01";
 
-        ----------------------------------------------------------------
-        -- CENÁRIO 2: níveis médios, modo normal → esperado ALERTA
-        --  - incrementa G1,G2,G3 duas vezes cada (nível 2)
-        --  - modo "01"
-        ----------------------------------------------------------------
-        sw(6 downto 5) <= "01";   -- modo normal
-        wait for 10 * C_CLK_PERIOD;
+        btn_g1 <= '0';  wait for 20 ns;
+        btn_g1 <= '1';  wait for 80 ns;
 
-        -- incrementa G1 duas vezes
-        btn_g1 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g1 <= '1';
-        wait for 6 * C_CLK_PERIOD;
-        btn_g1 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g1 <= '1';
-        wait for 6 * C_CLK_PERIOD;
+        btn_g2 <= '0';  wait for 20 ns;
+        btn_g2 <= '1';  wait for 80 ns;
 
-        -- incrementa G2 duas vezes
-        btn_g2 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g2 <= '1';
-        wait for 6 * C_CLK_PERIOD;
-        btn_g2 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g2 <= '1';
-        wait for 6 * C_CLK_PERIOD;
+        btn_g3 <= '0';  wait for 20 ns;
+        btn_g3 <= '1';  wait for 80 ns;
 
-        -- incrementa G3 duas vezes
-        btn_g3 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g3 <= '1';
-        wait for 6 * C_CLK_PERIOD;
-        btn_g3 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g3 <= '1';
-        wait for 10 * C_CLK_PERIOD;
-
-        -- requisita avaliação
-        btn_req <= '0';
-        wait for 2 * C_CLK_PERIOD;
+        btn_req <= '0'; wait for 20 ns;
         btn_req <= '1';
-        wait for 30 * C_CLK_PERIOD;
 
-        ----------------------------------------------------------------
-        -- CENÁRIO 3: níveis altos, modo ruim → esperado CRÍTICO
-        --  - mais um incremento em cada grupo (nível 3)
-        --  - modo "10"
-        ----------------------------------------------------------------
-        sw(6 downto 5) <= "10";   -- modo ruim
-        wait for 10 * C_CLK_PERIOD;
+        wait for 400 ns;
 
-        -- um incremento extra em cada grupo
-        btn_g1 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g1 <= '1';
-        wait for 6 * C_CLK_PERIOD;
-        btn_g2 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g2 <= '1';
-        wait for 6 * C_CLK_PERIOD;
-        btn_g3 <= '0';  wait for 2 * C_CLK_PERIOD;  btn_g3 <= '1';
-        wait for 10 * C_CLK_PERIOD;
+        -- CENÁRIO 3
+        sw(6 downto 5) <= "10";
 
-        -- requisita avaliação de risco
-        btn_req <= '0';
-        wait for 2 * C_CLK_PERIOD;
+        btn_g1 <= '0';  wait for 20 ns;
+        btn_g1 <= '1';  wait for 80 ns;
+
+        btn_g2 <= '0';  wait for 20 ns;
+        btn_g2 <= '1';  wait for 80 ns;
+
+        btn_g3 <= '0';  wait for 20 ns;
+        btn_g3 <= '1';  wait for 80 ns;
+
+        btn_req <= '0'; wait for 20 ns;
         btn_req <= '1';
-        wait for 100 * C_CLK_PERIOD;
+
+        wait for 400 ns;
 
         ----------------------------------------------------------------
-        -- Fim de simulação
+        -- Fim da simulação
         ----------------------------------------------------------------
         wait;
-    end process stim_proc;
+    end process;
 
-end architecture tb;
+end architecture sim;

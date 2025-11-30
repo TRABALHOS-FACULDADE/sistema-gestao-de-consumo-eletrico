@@ -50,9 +50,6 @@ architecture rtl of svc_broker is
 
 begin
 
-    --------------------------------------------------------------------
-    -- Instância de svc_resource_risk
-    --------------------------------------------------------------------
     u_svc_risk : entity work.svc_resource_risk
         port map (
             clk      => clk,
@@ -64,9 +61,6 @@ begin
             data_out => svc_risk_data_out
         );
 
-    --------------------------------------------------------------------
-    -- Instância de svc_resource_profile
-    --------------------------------------------------------------------
     u_svc_prof : entity work.svc_resource_profile
         port map (
             clk      => clk,
@@ -138,14 +132,10 @@ begin
         next_state       <= state;
 
         case state is
-
-            ----------------------------------------------------------------
             when ST_IDLE =>
                 if req_valid = '1' then
                     next_state <= ST_DECODE;
                 end if;
-
-            ----------------------------------------------------------------
             when ST_DECODE =>
                 if (reg_service_id = SVC_ID_RESOURCE_RISK) or
                    (reg_service_id = SVC_ID_RESOURCE_PROFILE) then
@@ -153,10 +143,7 @@ begin
                 else
                     next_state <= ST_ERROR;
                 end if;
-
-            ----------------------------------------------------------------
             when ST_DISPATCH =>
-                -- Um único ciclo de req para o serviço correspondente
                 if reg_service_id = SVC_ID_RESOURCE_RISK then
                     svc_risk_req     <= '1';
                     svc_risk_data_in <= reg_req_data;
@@ -170,28 +157,20 @@ begin
                 else
                     next_state       <= ST_ERROR;
                 end if;
-
-            ----------------------------------------------------------------
             when ST_WAIT_SVC =>
                 if (reg_service_id = SVC_ID_RESOURCE_RISK) and (svc_risk_done = '1') then
                     next_state <= ST_RETURN_RESP;
                 elsif (reg_service_id = SVC_ID_RESOURCE_PROFILE) and (svc_prof_done = '1') then
                     next_state <= ST_RETURN_RESP;
                 end if;
-
-            ----------------------------------------------------------------
             when ST_RETURN_RESP =>
                 resp_valid <= '1';
                 resp_data  <= reg_resp_data;
                 next_state <= ST_IDLE;
-
-            ----------------------------------------------------------------
             when ST_ERROR =>
                 resp_valid <= '1';
-                resp_data  <= (others => '1');  -- código de erro simples
+                resp_data  <= (others => '1');
                 next_state <= ST_IDLE;
-
-            ----------------------------------------------------------------
             when others =>
                 next_state <= ST_IDLE;
 
