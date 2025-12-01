@@ -16,10 +16,8 @@ entity Sistema is
 
         leds      : out std_logic_vector(7 downto 0);
 
-        -- HEX0: status (OK/AL/CR)
         hex0_seg  : out std_logic_vector(6 downto 0);
 
-        -- HEX2, HEX3, HEX4: níveis dos grupos 1, 2 e 3
         hex2_seg  : out std_logic_vector(6 downto 0);
         hex3_seg  : out std_logic_vector(6 downto 0);
         hex4_seg  : out std_logic_vector(6 downto 0)
@@ -41,25 +39,8 @@ architecture rtl of Sistema is
     signal level_g2_dbg      : std_logic_vector(1 downto 0);
     signal level_g3_dbg      : std_logic_vector(1 downto 0);
 
-    -- função auxiliar para converter 0..3 em 7 segmentos (ativo em 0)
-    function lvl_to_7seg(lvl : std_logic_vector(1 downto 0))
-        return std_logic_vector is
-        variable seg : std_logic_vector(6 downto 0);
-    begin
-        case lvl is
-            when "00" => seg := "1000000"; -- 0
-            when "01" => seg := "1111001"; -- 1
-            when "10" => seg := "0100100"; -- 2
-            when others => seg := "0110000"; -- 3
-        end case;
-        return seg;
-    end function;
-
 begin
 
-    --------------------------------------------------------------------
-    -- CLIENT
-    --------------------------------------------------------------------
     u_client : entity work.svc_client
         port map (
             clk            => clk,
@@ -84,9 +65,6 @@ begin
             level_g3_dbg   => level_g3_dbg
         );
 
-    --------------------------------------------------------------------
-    -- BROKER
-    --------------------------------------------------------------------
     u_broker : entity work.svc_broker
         port map (
             clk            => clk,
@@ -98,49 +76,31 @@ begin
             resp_data      => broker_resp_data
         );
 
-    --------------------------------------------------------------------
-    -- HEX0: status do sistema (OK/AL/CR)
-    --------------------------------------------------------------------
     u_disp_status : entity work.display_driver
         port map (
             risk_code => broker_resp_data(1 downto 0),
             seg       => hex0_seg
         );
 
-    --------------------------------------------------------------------
-    -- HEX2: nível do Grupo 1 (mostra 0..3 quando SW2=1, apaga se SW2=0)
-    --------------------------------------------------------------------
-    process(sw(2), level_g1_dbg)
-    begin
-        if sw(2) = '1' then
-            hex2_seg <= lvl_to_7seg(level_g1_dbg);
-        else
-            hex2_seg <= (others => '1'); -- tudo apagado (ativo em 0)
-        end if;
-    end process;
+    u_hex2 : entity work.lvl_display_7seg
+        port map (
+            en  => sw(2),
+            lvl => level_g1_dbg,
+            seg => hex2_seg
+        );
 
-    --------------------------------------------------------------------
-    -- HEX3: nível do Grupo 2
-    --------------------------------------------------------------------
-    process(sw(3), level_g2_dbg)
-    begin
-        if sw(3) = '1' then
-            hex3_seg <= lvl_to_7seg(level_g2_dbg);
-        else
-            hex3_seg <= (others => '1');
-        end if;
-    end process;
+    u_hex3 : entity work.lvl_display_7seg
+        port map (
+            en  => sw(3),
+            lvl => level_g2_dbg,
+            seg => hex3_seg
+        );
 
-    --------------------------------------------------------------------
-    -- HEX4: nível do Grupo 3
-    --------------------------------------------------------------------
-    process(sw(4), level_g3_dbg)
-    begin
-        if sw(4) = '1' then
-            hex4_seg <= lvl_to_7seg(level_g3_dbg);
-        else
-            hex4_seg <= (others => '1');
-        end if;
-    end process;
+    u_hex4 : entity work.lvl_display_7seg
+        port map (
+            en  => sw(4),
+            lvl => level_g3_dbg,
+            seg => hex4_seg
+        );
 
 end architecture rtl;

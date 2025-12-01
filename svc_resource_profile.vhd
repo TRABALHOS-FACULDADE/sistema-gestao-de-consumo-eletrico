@@ -100,7 +100,7 @@ begin
     --------------------------------------------------------------------
     -- Instâncias dos micro-serviços de leitura de nível de grupo
     --------------------------------------------------------------------
-    u_read1 : entity work.ms_read_group_g1
+    u_read1 : entity work.ms_read_group_gx
         port map (
             clk      => clk,
             rst_n    => rst_n,
@@ -110,7 +110,7 @@ begin
             data_out => read1_data_out
         );
 
-    u_read2 : entity work.ms_read_group_g2
+    u_read2 : entity work.ms_read_group_gx
         port map (
             clk      => clk,
             rst_n    => rst_n,
@@ -120,7 +120,7 @@ begin
             data_out => read2_data_out
         );
 
-    u_read3 : entity work.ms_read_group_g3
+    u_read3 : entity work.ms_read_group_gx
         port map (
             clk      => clk,
             rst_n    => rst_n,

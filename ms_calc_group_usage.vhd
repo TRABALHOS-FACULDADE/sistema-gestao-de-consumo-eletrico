@@ -57,8 +57,6 @@ begin
 
                 when MS_IDLE =>
                     if req = '1' then
-                        -- Conversão de nível -> uso de recurso
-                        -- usando to_unsigned para adequar à largura C_DATA_WIDTH
                         case data_in(1 downto 0) is
                             when "00" =>
                                 reg_out <= std_logic_vector(to_unsigned(0,  C_DATA_WIDTH));  -- 0

@@ -183,8 +183,8 @@ begin
             ----------------------------------------------------------------
             when S_CALL_PROFILE =>
                 busy         <= '1';
-                prof_req     <= '1';        -- pulso de requisição
-                prof_data_in <= data_in;    -- passa níveis + modo
+                prof_req     <= '1'; -- pulso de requisição
+                prof_data_in <= data_in; -- passa níveis + modo
                 next_state   <= S_WAIT_PROFILE;
 
             when S_WAIT_PROFILE =>

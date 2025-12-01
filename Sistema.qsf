@@ -88,9 +88,6 @@ set_global_assignment -name VHDL_FILE svc_resource_profile.vhd
 set_global_assignment -name VHDL_FILE svc_resource_risk.vhd
 set_global_assignment -name VHDL_FILE soa_resource_pkg.vhd
 set_global_assignment -name VHDL_FILE ms_calc_group_usage.vhd
-set_global_assignment -name VHDL_FILE ms_read_group_g1.vhd
-set_global_assignment -name VHDL_FILE ms_read_group_g2.vhd
-set_global_assignment -name VHDL_FILE ms_read_group_g3.vhd
 set_location_assignment PIN_W9 -to btn_g1
 set_location_assignment PIN_M7 -to btn_g2
 set_location_assignment PIN_M6 -to btn_g3
@@ -139,4 +136,6 @@ set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "3000 ns" -section_id Sis
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Sistema_tb -section_id Sistema_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE ms_fuzzy_risk_tb.vhd -section_id ms_fuzzy_risk_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE Sistema_tb.vhd -section_id Sistema_tb
+set_global_assignment -name VHDL_FILE ms_read_group_gx.vhd
+set_global_assignment -name VHDL_FILE lvl_display_7seg.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

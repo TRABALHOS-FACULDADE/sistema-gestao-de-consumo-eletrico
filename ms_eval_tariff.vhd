@@ -39,15 +39,13 @@ begin
             reg_data_out <= (others => '0');
             done         <= '0';
         elsif rising_edge(clk) then
-
-            -- default a cada ciclo
             done <= '0';
 
             case state is
 
                 when MS_IDLE =>
                     if req = '1' then
-                        reg_data_in <= data_in;              -- captura entrada
+                        reg_data_in <= data_in;
                         state       <= MS_PROCESS;
                     end if;
 
@@ -61,7 +59,7 @@ begin
                     state <= MS_DONE;
 
                 when MS_DONE =>
-                    done  <= '1';      -- avisa 1 ciclo que terminou
+                    done  <= '1';
                     state <= MS_IDLE;
 
                 when others =>
